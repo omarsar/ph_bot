@@ -5,20 +5,32 @@ import ph_keys
 import requests
 from urllib.request import urlopen
 import os
+import re
 import json
 from twython import Twython
+
 
 #initializers
 twitter = Twython(os.environ.get('APP_KEY'),os.environ.get('APP_SECRET'),os.environ.get('OAUTH_TOKEN'), \
 	os.environ.get('OAUTH_TOKEN_SECRET'))
 parameters = {'access_token': os.environ.get('PH_ACCESS_TOKEN')}
 
-
-#function to try to get the twitter handle of a product from their site.
+#TODO(2.0): function to try to get the twitter handle of a product from their site. 
 def get_twitter_handle(url):
-	r = requests.get(url)
-	print (r.url)
-	print ("In getting twitter handle function")
+	try:
+		r = requests.get(url)
+		print (r.url)
+		request = urlopen(r.url)
+		html_page = request.read()
+
+		twitter_handle = re.findall(r'https://twitter.com/(\w+)',str(html_page),re.I)
+		if twitter_handle:
+			return twitter_handle[0]
+		else:
+			return "No Twitter Found :("
+	except Exception as e:
+		print(e.__doc__)
+		print(e.message)
 
 #function to get the platforms of the products
 def get_product_platforms(p):
@@ -40,15 +52,13 @@ def pull_products():
 				if 'Web' in get_product_platforms(p['platforms']):
 					print ("This product has a web version")
 
-				print (p["name"])
+					print (p["name"])
 				
-				if p['redirect_url']:
-					get_twitter_handle(p['redirect_url'])
-
+					if p['redirect_url']:
+						print(get_twitter_handle(p['redirect_url']))
 
 		print (len(result['posts']))
 
-		print ("In getting product function")
 	except Exception as e:
 		print (e.__doc__)
 		print (e.message)
