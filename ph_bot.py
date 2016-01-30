@@ -15,8 +15,17 @@ twitter = Twython(os.environ.get('APP_KEY'),os.environ.get('APP_SECRET'),os.envi
 	os.environ.get('OAUTH_TOKEN_SECRET'))
 parameters = {'access_token': os.environ.get('PH_ACCESS_TOKEN')}
 
+#function to check if the account exists so as to verify and mention this handle name on Twitter
+def check_twitter_account_status(twitter_handle):
+	t_parameters = {'username': twitter_handle}
+	user_url = "https://twitter.com/users/username_available"
+	r = requests.get(user_url, params = t_parameters)	
+	result = json.loads(r.text)
+
+	print ("Twitter handle: ", result['reason'])
+
 #TODO(2.0): function to try to get the twitter handle of a product from their site. 
-def get_twitter_handle(url):
+def scrape_twitter_handle(url):
 	try:
 		r = requests.get(url)
 		print (r.url)
@@ -27,7 +36,7 @@ def get_twitter_handle(url):
 		if twitter_handle:
 			return twitter_handle[0]
 		else:
-			return "No Twitter Found :("
+			return False
 	except Exception as e:
 		print(e.__doc__)
 		print(e.message)
@@ -55,7 +64,11 @@ def pull_products():
 					print (p["name"])
 				
 					if p['redirect_url']:
-						print(get_twitter_handle(p['redirect_url']))
+						#print(scrape_twitter_handle(p['redirect_url']))
+						twitter_handle  = scrape_twitter_handle(p['redirect_url'])
+						if twitter_handle:
+							print (twitter_handle)
+							check_twitter_account_status(twitter_handle)
 
 		print (len(result['posts']))
 
