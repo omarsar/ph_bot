@@ -12,4 +12,4 @@
 !/log/.keep
 /tmp
 /ph_keys.py
-/__pycache__/
+/__pycache__/*
