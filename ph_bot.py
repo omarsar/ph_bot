@@ -76,13 +76,13 @@ def pull_products():
 		print (e.__doc__)
 		print (e.message)
 
-
-
 #post final tweet of trending products
 def post_tweet():
-	twitter.update_status(status='Product Index is a curated list of the most interesting tech products online')
-	print ("Post tweet")
+	#Tweet format
+	#ProductA(MakerA), ProductB(MakerB), ...
 
+	twitter.update_status(status='Hi @ibelmopan how are you doing?')
+	print ("Post tweet")
 
 #main=========================================>
 pull_products()
